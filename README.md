@@ -11,3 +11,5 @@ Todos os scripts foram desenvolvidos em Python.
 Uma pasta com as queries utilizadas encontra-se disponível no repositório
 
 O projeto encontra-se em construção.
+
+Arquivos com credenciais encontram-se intencionalmente omitidos ou ofuscados. 
