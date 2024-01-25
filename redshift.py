@@ -4,11 +4,10 @@ from sqlalchemy.exc import SQLAlchemyError
 from utils import redshift_connect
 from db_config import REDSHIFT_CONFIG
 
-def check_last_update(db_config_settings):
-    conn = redshift_connect(db_config_settings)
+def check_last_update():
+    conn = redshift_connect(REDSHIFT_CONFIG)
 
-    sql_query = "SELECT MAX(insertion_date) FROM books;"
-    last_update = None
+    sql_query = "SELECT MAX(insertion_date) FROM books where insertion_date > '2024-01-20';"
     
     try:
         results = conn.execute(sql_query)
@@ -17,17 +16,18 @@ def check_last_update(db_config_settings):
         conn.close()
         return last_update
 
-def upsert_data(db_config_settings, s3_path):
+def upsert_data(s3_path: str):
 
     with open('queries/upsert_redshift.sql', 'r') as sql_file:
         sql_query = text(sql_file.read()).bindparams(s3path=s3_path)
 
-    conn = redshift_connect(db_config_settings)
+    conn = redshift_connect(REDSHIFT_CONFIG)
     transaction = conn.begin()
 
     try:
         conn.execute(sql_query)
         transaction.commit()
+        
     except SQLAlchemyError as e:
         transaction.rollback()
     finally:
@@ -36,5 +36,5 @@ def upsert_data(db_config_settings, s3_path):
 
 if __name__ == "__main__":
 
-    #check_last_update(REDSHIFT_CONFIG)
-    upsert_data(REDSHIFT_CONFIG, 's3://books-landing/1705960852.parquet')
+    check_last_update(REDSHIFT_CONFIG)
+    #upsert_data(REDSHIFT_CONFIG, 's3://books-landing/1705960852.parquet')
