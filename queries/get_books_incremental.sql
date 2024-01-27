@@ -3,4 +3,4 @@ join author a
 on b.author_id = a.id
 join country c
 on c.id = a.country_id
-where inserted_at > %s;
+where inserted_at > %(process_date)s;
