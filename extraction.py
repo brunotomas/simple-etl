@@ -23,9 +23,3 @@ def query_mysql_and_save_parquet(query_file_path: str, process_date: str=None):
         return output_parquet_file
     finally:
         connection.close()
-   
-
-if __name__ == "__main__":
-    
-    query_mysql_and_save_parquet("queries/get_books_incremental.sql", '2024-01-15')
-    #query_mysql_and_save_parquet("queries/get_books_full.sql")

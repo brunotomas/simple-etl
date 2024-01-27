@@ -32,9 +32,3 @@ def upsert_data(s3_path: str):
         transaction.rollback()
     finally:
         conn.close()
-
-
-if __name__ == "__main__":
-
-    check_last_update()
-    #upsert_data(REDSHIFT_CONFIG, 's3://books-landing/1705960852.parquet')
