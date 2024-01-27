@@ -24,42 +24,47 @@ def simple_etl():
 
     @task
     def incremental_extract():
+
         context = get_current_context()
-        
         ti = context['ti']
         last_update = ti.xcom_pull("last_update")
         
         parquet_file = query_mysql_and_save_parquet('queries/get_books_incremental.sql', last_update)
-        ti.xcom_push("parquet_file", parquet_file)
+        ti.xcom_push("parquet_file_inc", parquet_file)
         return parquet_file
 
 
     @task
     def full_extract():
+
         parquet_file = query_mysql_and_save_parquet('queries/get_books_full.sql')
 
         context = get_current_context()
         ti = context['ti']
-        ti.xcom_push("parquet_file", parquet_file)
+        ti.xcom_push("parquet_file_full", parquet_file)
         return parquet_file
     
 
     @task.branch
     def check_full_or_incremental_extract(last_update):
+
         extract_type = 'incremental_extract' if last_update else 'full_extract'
         return extract_type
     
     @task(trigger_rule=TriggerRule.NONE_FAILED_MIN_ONE_SUCCESS)
     def s3_upload():
+
         context = get_current_context()
         ti = context['ti']
-        parquet_file = ti.xcom_pull("parquet_file")
+        extract_type = ti.xcom_pull(key='return_value', task_ids='check_full_or_incremental_extract')
+        parquet_file = ti.xcom_pull(key="parquet_file", task_ids=extract_type)
         
-        s3_file_path = upload_parquet_to_s3(parquet_file, 'books-landing')
+        s3_file_path = upload_parquet_to_s3(f'extracts/{parquet_file}', 'books-landing')
         return s3_file_path
     
     @task
     def load_into_target(s3_path):
+
         upsert_data(s3_path)
     
     end = EmptyOperator(task_id='end')
