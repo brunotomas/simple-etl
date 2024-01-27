@@ -15,10 +15,9 @@ def query_mysql_and_save_parquet(query_file_path: str, process_date: str=None):
 
     try:
         if process_date:
-            result = pd.read_sql_query(sql_query, connection, params=[process_date])
+            result = pd.read_sql_query(sql_query, connection, params={'process_date': process_date})
         else:
             result = pd.read_sql_query(sql_query, connection)
-        print(result.size)
         result.to_parquet(output_parquet_file, index=False)
 
         return output_parquet_file
