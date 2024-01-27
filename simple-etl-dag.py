@@ -1,3 +1,5 @@
+from datetime import date
+
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import get_current_context
 from airflow.utils.trigger_rule import TriggerRule
@@ -14,7 +16,7 @@ def simple_etl():
 
     @task
     def check_target_last_update():
-        last_update = check_last_update()
+        last_update = date.strftime(check_last_update(), '%Y-%m-%d')
         
         context = get_current_context()
         ti = context['ti']
@@ -27,7 +29,7 @@ def simple_etl():
 
         context = get_current_context()
         ti = context['ti']
-        last_update = ti.xcom_pull("last_update")
+        last_update = ti.xcom_pull(key="return_value", task_ids='check_target_last_update')
         
         parquet_file = query_mysql_and_save_parquet('queries/get_books_incremental.sql', last_update)
         ti.xcom_push("parquet_file_inc", parquet_file)
