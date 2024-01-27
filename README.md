@@ -1,4 +1,4 @@
-# simple-etl (WIP)
+# simple-etl
 
 O projeto em questão é composto de 3 etapas:
 
@@ -8,8 +8,8 @@ O projeto em questão é composto de 3 etapas:
 
 Todos os scripts foram desenvolvidos em Python.
 
-Uma pasta com as queries utilizadas encontra-se disponível no repositório
-
-O projeto encontra-se em construção.
+Uma pasta com as queries utilizadas em MySQL e no Redshift encontra-se disponível no repositório
 
 Arquivos com credenciais encontram-se intencionalmente omitidos ou ofuscados. 
+
+Todas as dependências necessárias encontram-se no arquivo `requirements.txt`.
