@@ -7,7 +7,7 @@ from db_config import REDSHIFT_CONFIG
 def check_last_update():
     conn = redshift_connect(REDSHIFT_CONFIG)
 
-    sql_query = "SELECT MAX(insertion_date) FROM books where insertion_date > '2024-01-20';"
+    sql_query = "SELECT MAX(insertion_date) FROM books;"
     
     try:
         results = conn.execute(sql_query)
@@ -27,7 +27,7 @@ def upsert_data(s3_path: str):
     try:
         conn.execute(sql_query)
         transaction.commit()
-        
+
     except SQLAlchemyError as e:
         transaction.rollback()
     finally:
@@ -36,5 +36,5 @@ def upsert_data(s3_path: str):
 
 if __name__ == "__main__":
 
-    check_last_update(REDSHIFT_CONFIG)
+    check_last_update()
     #upsert_data(REDSHIFT_CONFIG, 's3://books-landing/1705960852.parquet')

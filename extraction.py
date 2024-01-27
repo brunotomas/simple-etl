@@ -14,7 +14,11 @@ def query_mysql_and_save_parquet(query_file_path: str, process_date: str=None):
     output_parquet_file = f"extracts/output_data_{int(datetime.timestamp(datetime.now()))}.parquet"
 
     try:
-        result = pd.read_sql_query(sql_query, connection, params=[process_date])
+        if process_date:
+            result = pd.read_sql_query(sql_query, connection, params=[process_date])
+        else:
+            result = pd.read_sql_query(sql_query, connection)
+        print(result.size)
         result.to_parquet(output_parquet_file, index=False)
 
         return output_parquet_file
@@ -24,5 +28,5 @@ def query_mysql_and_save_parquet(query_file_path: str, process_date: str=None):
 
 if __name__ == "__main__":
     
-    query_mysql_and_save_parquet("queries/get_books_incremental.sql", '2024-01-20')
-    query_mysql_and_save_parquet("queries/get_books_full.sql")
+    query_mysql_and_save_parquet("queries/get_books_incremental.sql", '2024-01-15')
+    #query_mysql_and_save_parquet("queries/get_books_full.sql")

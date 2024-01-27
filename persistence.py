@@ -18,7 +18,7 @@ def upload_parquet_to_s3(parquet_file_path, bucket_name):
 if __name__ == "__main__":
 
     bucket_name = 'books-landing'
-    parquet_file_path = 'output_data_1706210538.parquet'
+    parquet_file_path = 'extracts/output_data_1706316642.parquet'
 
     # Upload the Parquet file to the specified S3 bucket and object key
     upload_parquet_to_s3(parquet_file_path, bucket_name)
